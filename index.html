@@ -5,455 +5,159 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sasho Dimitrov — Video Editor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink:     #0D0D0F;
-    --paper:   #F7F5F0;
-    --red:     #E94F37;
-    --red-dim: #b83c28;
-    --smoke:   #1A1A2E;
-    --muted:   #6B6B7A;
-    --border:  #E0DDD6;
+    --black:  #0C0C0C;
+    --dark:   #111215;
+    --white:  #F0EDE8;
+    --red:    #C8372D;
+    --grey:   rgba(240,237,232,0.45);
+    --line:   rgba(240,237,232,0.1);
+    --card:   #161618;
   }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Montserrat', sans-serif; font-weight: 300; overflow-x: hidden; }
 
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    overflow-x: hidden;
-    cursor: none;
-  }
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.8rem 4rem; background: linear-gradient(to bottom, rgba(12,12,12,0.97) 0%, transparent 100%); }
+  .nav-logo { font-size: 0.85rem; font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: var(--white); text-decoration: none; }
+  .nav-links { display: flex; gap: 2.8rem; list-style: none; }
+  .nav-links a { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--grey); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--white); }
 
-  /* ── Custom cursor ── */
-  .cursor {
-    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
-    width: 12px; height: 12px;
-    background: var(--red);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease, background 0.2s;
-    mix-blend-mode: multiply;
-  }
-  .cursor.big { width: 48px; height: 48px; background: var(--red); opacity: 0.3; }
+  /* HERO */
+  .hero { height: 100vh; min-height: 620px; display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--line); overflow: hidden; }
+  .hero-left { display: flex; flex-direction: column; justify-content: flex-end; padding: 5rem 4rem; position: relative; overflow: hidden; background: var(--dark); border-right: 1px solid var(--line); }
+  .hero-left-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 0% 100%, rgba(200,55,45,0.08) 0%, transparent 60%); }
+  .hero-eyebrow { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--red); margin-bottom: 1.8rem; position: relative; }
+  .hero-name { font-family: 'DM Serif Display', serif; font-size: clamp(3.5rem, 6vw, 5.5rem); line-height: 1; color: var(--white); position: relative; }
+  .hero-name em { font-style: italic; color: rgba(240,237,232,0.4); }
+  .hero-role { margin-top: 1.8rem; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey); position: relative; }
+  .hero-divider { width: 32px; height: 1px; background: var(--red); margin: 2rem 0; position: relative; }
+  .hero-desc { font-size: 0.85rem; line-height: 1.85; color: var(--grey); max-width: 380px; position: relative; }
+  .hero-cta { display: inline-flex; align-items: center; gap: 0.8rem; margin-top: 2.5rem; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--white); text-decoration: none; position: relative; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.3rem; transition: gap 0.2s, border-color 0.2s, color 0.2s; }
+  .hero-cta:hover { gap: 1.4rem; border-color: var(--red); color: var(--red); }
+  .hero-right { display: grid; grid-template-rows: 1fr 1fr; }
+  .hero-right-top { background: var(--black); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line); position: relative; overflow: hidden; padding: 3rem; }
+  .hero-right-top::before { content: 'SD'; position: absolute; font-family: 'DM Serif Display', serif; font-size: 18rem; line-height: 1; color: rgba(255,255,255,0.02); top: -0.1em; right: -0.05em; pointer-events: none; user-select: none; }
+  .hero-quote { font-family: 'DM Serif Display', serif; font-size: clamp(1.2rem, 2vw, 1.7rem); font-style: italic; line-height: 1.5; color: rgba(240,237,232,0.6); text-align: center; max-width: 320px; position: relative; }
+  .hero-quote span { color: var(--white); font-style: normal; }
+  .hero-right-bottom { display: grid; grid-template-columns: repeat(2, 1fr); }
+  .hero-stat { padding: 2rem 2.5rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .hero-stat:nth-child(2n) { border-right: none; }
+  .hero-stat:nth-child(3), .hero-stat:nth-child(4) { border-bottom: none; }
+  .hero-stat-num { font-family: 'DM Serif Display', serif; font-size: 2.8rem; line-height: 1; color: var(--white); }
+  .hero-stat-num sup { font-family: 'Montserrat', sans-serif; font-size: 1rem; color: var(--red); }
+  .hero-stat-lbl { margin-top: 0.4rem; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey); }
 
-  /* ── Nav ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.4rem 3rem;
-    mix-blend-mode: multiply;
-  }
-  .nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
-    letter-spacing: 0.12em;
-    color: var(--ink);
-    text-decoration: none;
-  }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-  .nav-links a {
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--red); }
+  /* SECTION MARKER */
+  .sec-marker { display: flex; align-items: center; gap: 1.5rem; padding: 1.4rem 4rem; border-bottom: 1px solid var(--line); }
+  .sec-marker-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey); white-space: nowrap; }
+  .sec-marker-line { flex: 1; height: 1px; background: var(--line); }
+  .sec-marker-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
 
-  /* ── Hero ── */
-  .hero {
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    overflow: hidden;
-  }
-  .hero-left {
-    background: var(--smoke);
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 5rem 4rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-left::before {
-    content: 'SD';
-    position: absolute; top: -0.15em; left: -0.05em;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(14rem, 22vw, 20rem);
-    color: rgba(255,255,255,0.03);
-    line-height: 1;
-    pointer-events: none;
-    user-select: none;
-  }
-  .hero-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    color: var(--red);
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-  }
-  .hero-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(4rem, 8vw, 7rem);
-    line-height: 0.92;
-    color: #fff;
-    letter-spacing: 0.02em;
-  }
-  .hero-name span { color: var(--red); }
-  .hero-sub {
-    margin-top: 2rem;
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.45);
-    line-height: 1.7;
-    max-width: 320px;
-  }
-  .hero-cta {
-    margin-top: 2.5rem;
-    display: inline-flex; align-items: center; gap: 0.7rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--red);
-    text-decoration: none;
-    border-bottom: 1px solid var(--red);
-    padding-bottom: 0.25rem;
-    width: fit-content;
-    transition: gap 0.2s;
-  }
-  .hero-cta:hover { gap: 1.2rem; }
+  /* WORK GRID */
+  .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); }
+  .work-card { border-right: 1px solid var(--line); overflow: hidden; background: var(--dark); }
+  .work-card:nth-child(3n) { border-right: none; }
+  .work-card-wide { grid-column: span 2; border-right: 1px solid var(--line); }
 
-  .hero-right {
-    background: var(--paper);
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 8rem 4rem 5rem;
-    border-left: 1px solid var(--border);
-  }
-  .hero-stats {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;
-  }
-  .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3.8rem;
-    line-height: 1;
-    color: var(--ink);
-  }
-  .stat-num span { color: var(--red); }
-  .stat-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 0.3rem;
-  }
-  .hero-divider {
-    width: 40px; height: 2px;
-    background: var(--red);
-    margin: 3rem 0;
-  }
-  .hero-skills {
-    display: flex; flex-wrap: wrap; gap: 0.5rem;
-  }
-  .skill-pill {
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.35rem 0.85rem;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    border-radius: 2px;
-    transition: all 0.2s;
-  }
-  .skill-pill:hover { border-color: var(--red); color: var(--red); }
+  /* VIDEO EMBED */
+  .work-thumb { position: relative; overflow: hidden; background: var(--black); }
+  .work-thumb-ratio { padding-top: 56.25%; }
+  .work-thumb iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+  .work-thumb-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #181818 0%, #0c0c0c 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.8rem; cursor: pointer; transition: opacity 0.3s; }
+  .work-thumb-cover.hidden { opacity: 0; pointer-events: none; }
+  .play-ring { width: 56px; height: 56px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 1.1rem; transition: all 0.3s; }
+  .work-card:hover .play-ring { border-color: var(--red); color: var(--red); }
+  .play-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
 
-  /* ── Section base ── */
-  section { padding: 7rem 3rem; }
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 0.8rem;
-  }
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    line-height: 0.95;
-    letter-spacing: 0.02em;
-  }
+  .work-info { padding: 1.4rem 1.6rem 1.8rem; border-top: 2px solid transparent; transition: border-color 0.3s; }
+  .work-card:hover .work-info { border-top-color: var(--red); }
+  .work-cat { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--red); margin-bottom: 0.5rem; }
+  .work-name { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--white); line-height: 1.25; }
+  .work-desc { margin-top: 0.6rem; font-size: 0.72rem; line-height: 1.6; color: var(--grey); }
+  .work-link { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1rem; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(240,237,232,0.5); text-decoration: none; transition: color 0.2s, gap 0.2s; }
+  .work-link:hover { color: var(--red); gap: 0.8rem; }
 
-  /* ── Work grid ── */
-  #work { background: var(--smoke); }
-  #work .section-title { color: #fff; }
-  #work .section-label { margin-bottom: 3rem; }
-  .work-header { max-width: 1200px; margin: 0 auto 4rem; }
+  /* ABOUT */
+  .about { display: grid; grid-template-columns: 1.1fr 1fr; border-bottom: 1px solid var(--line); }
+  .about-left { padding: 5rem 4rem; border-right: 1px solid var(--line); }
+  .about-heading { font-family: 'DM Serif Display', serif; font-size: clamp(2.5rem, 4vw, 3.8rem); line-height: 1.05; color: var(--white); margin-top: 1.2rem; }
+  .about-heading em { font-style: italic; color: rgba(240,237,232,0.35); }
+  .about-body { margin-top: 2.2rem; font-size: 0.85rem; line-height: 1.9; color: var(--grey); border-top: 1px solid var(--line); padding-top: 1.8rem; }
+  .about-body strong { color: var(--white); font-weight: 600; }
+  .about-right { padding: 5rem 3.5rem; }
+  .about-section-title { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--red); padding-bottom: 1rem; border-bottom: 1px solid var(--line); margin-bottom: 0.5rem; }
+  .skill-row { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
+  .skill-name { font-size: 0.78rem; font-weight: 400; color: var(--white); }
+  .skill-level { font-size: 0.57rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--red); }
+  .lang-block { margin-top: 2.5rem; }
+  .lang-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--line); font-size: 0.78rem; }
+  .lang-item span:last-child { color: var(--grey); font-style: italic; font-size: 0.72rem; }
 
-  .work-grid {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5px;
-    background: rgba(255,255,255,0.06);
-  }
-  .work-card {
-    background: var(--smoke);
-    position: relative;
-    overflow: hidden;
-    aspect-ratio: 16/10;
-    cursor: none;
-  }
-  .work-card.wide { grid-column: span 2; }
-  .work-thumb {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    opacity: 0;
-    transition: transform 0.6s ease, opacity 0.4s;
-  }
-  .work-card-inner {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 2rem;
-    background: linear-gradient(to top, rgba(13,13,15,0.9) 0%, transparent 60%);
-    opacity: 1;
-    transition: opacity 0.3s;
-  }
-  .work-card:hover .work-card-inner { opacity: 1; }
-  .work-card:hover .work-thumb { transform: scale(1.04); opacity: 1; }
-  .work-placeholder {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 0.5rem;
-    background: linear-gradient(135deg, rgba(233,79,55,0.08) 0%, rgba(26,26,46,0.6) 100%);
-  }
-  .placeholder-icon {
-    width: 48px; height: 48px;
-    border: 2px solid rgba(233,79,55,0.4);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--red);
-    font-size: 1.2rem;
-    opacity: 0.7;
-  }
-  .placeholder-text {
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.25);
-  }
-  .work-card-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.5rem;
-    letter-spacing: 0.05em;
-    color: #fff;
-    line-height: 1;
-  }
-  .work-card-meta {
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-top: 0.3rem;
-  }
-  .work-card-link {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    margin-top: 0.8rem;
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .work-card-link:hover { color: var(--red); }
-  .work-card-link .arrow { transition: transform 0.2s; }
-  .work-card-link:hover .arrow { transform: translateX(4px); }
+  /* SERVICES */
+  .services { padding: 5rem 4rem; border-bottom: 1px solid var(--line); }
+  .services-heading { font-family: 'DM Serif Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; color: var(--white); margin-top: 1rem; margin-bottom: 3.5rem; }
+  .services-heading em { font-style: italic; color: rgba(240,237,232,0.3); }
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); }
+  .svc { padding: 2.2rem 2rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); transition: background 0.25s; }
+  .svc:hover { background: var(--card); }
+  .svc:nth-child(3n) { border-right: none; }
+  .svc:nth-child(n+4) { border-bottom: none; }
+  .svc-num { font-family: 'DM Serif Display', serif; font-size: 0.9rem; font-style: italic; color: var(--red); margin-bottom: 1rem; }
+  .svc-title { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white); margin-bottom: 0.7rem; }
+  .svc-desc { font-size: 0.75rem; line-height: 1.7; color: var(--grey); }
 
-  /* ── About ── */
-  #about {
-    background: var(--paper);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    align-items: center;
-    max-width: none;
-    padding: 7rem 4rem;
-  }
-  .about-left {}
-  .about-body {
-    margin-top: 2rem;
-    font-size: 1.05rem;
-    line-height: 1.8;
-    color: var(--muted);
-    max-width: 480px;
-  }
-  .about-body strong { color: var(--ink); font-weight: 500; }
-  .about-right {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-  .about-fact {
-    padding: 1.8rem 1.5rem;
-    border: 1px solid var(--border);
-    transition: border-color 0.2s;
-  }
-  .about-fact:hover { border-color: var(--red); }
-  .about-fact-icon {
-    font-size: 1.4rem; margin-bottom: 0.8rem;
-  }
-  .about-fact-title {
-    font-weight: 500; font-size: 0.88rem; margin-bottom: 0.3rem;
-  }
-  .about-fact-text {
-    font-size: 0.78rem; color: var(--muted); line-height: 1.5;
-  }
+  /* CONTACT */
+  .contact { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--line); }
+  .contact-left { padding: 5rem 4rem; border-right: 1px solid var(--line); display: flex; flex-direction: column; justify-content: center; }
+  .contact-heading { font-family: 'DM Serif Display', serif; font-size: clamp(2.5rem, 4vw, 4rem); line-height: 1.05; color: var(--white); margin-top: 1rem; }
+  .contact-heading em { font-style: italic; color: rgba(240,237,232,0.35); }
+  .contact-sub { margin-top: 1.5rem; font-size: 0.82rem; line-height: 1.8; color: var(--grey); max-width: 360px; }
+  .contact-right { padding: 5rem 4rem; display: flex; flex-direction: column; justify-content: center; }
+  .contact-item { padding: 1.6rem 0; border-bottom: 1px solid var(--line); }
+  .contact-item:first-child { border-top: 1px solid var(--line); }
+  .contact-item-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--red); margin-bottom: 0.5rem; }
+  .contact-item-value { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--white); text-decoration: none; transition: color 0.2s; }
+  .contact-item-value:hover { color: var(--red); }
 
-  /* ── Services ── */
-  #services {
-    background: #F0EDE6;
-    padding: 7rem 4rem;
-  }
-  .services-grid {
-    max-width: 1100px;
-    margin: 3.5rem auto 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-  }
-  .service-item {
-    background: #F0EDE6;
-    padding: 2.5rem 2rem;
-    transition: background 0.25s;
-  }
-  .service-item:hover { background: var(--ink); }
-  .service-item:hover .service-title,
-  .service-item:hover .service-text { color: rgba(255,255,255,0.8); }
-  .service-item:hover .service-num { color: var(--red); }
-  .service-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3rem;
-    color: var(--border);
-    line-height: 1;
-    transition: color 0.25s;
-  }
-  .service-title {
-    font-weight: 500;
-    font-size: 1rem;
-    margin: 1rem 0 0.6rem;
-    transition: color 0.25s;
-  }
-  .service-text {
-    font-size: 0.82rem;
-    color: var(--muted);
-    line-height: 1.65;
-    transition: color 0.25s;
-  }
+  /* FOOTER */
+  footer { display: flex; align-items: center; justify-content: space-between; padding: 1.8rem 4rem; border-top: 1px solid var(--line); }
+  .footer-copy { font-size: 0.6rem; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: var(--grey); }
+  .footer-logo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; font-style: italic; color: rgba(240,237,232,0.3); }
 
-  /* ── Contact ── */
-  #contact {
-    background: var(--smoke);
-    text-align: center;
-    padding: 8rem 3rem;
-  }
-  #contact .section-title { color: #fff; font-size: clamp(3rem, 8vw, 6rem); }
-  .contact-sub {
-    margin: 1.5rem auto 0;
-    max-width: 400px;
-    font-size: 0.88rem;
-    color: rgba(255,255,255,0.35);
-    line-height: 1.7;
-  }
-  .contact-email {
-    display: inline-block;
-    margin-top: 3rem;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-    letter-spacing: 0.06em;
-    color: var(--red);
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.2s;
-  }
-  .contact-email:hover { border-color: var(--red); }
-  .contact-links {
-    display: flex; justify-content: center; gap: 2rem;
-    margin-top: 2.5rem;
-  }
-  .contact-link {
-    font-size: 0.72rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .contact-link:hover { color: var(--red); }
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
 
-  /* ── Footer ── */
-  footer {
-    background: var(--smoke);
-    border-top: 1px solid rgba(255,255,255,0.06);
-    padding: 1.5rem 3rem;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .footer-copy {
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    color: rgba(255,255,255,0.18);
-  }
-  .footer-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
-    letter-spacing: 0.14em;
-    color: rgba(255,255,255,0.18);
-  }
-
-  /* ── Reveal animation ── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* ── Responsive ── */
+  /* RESPONSIVE */
   @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; }
-    .hero-right { padding-top: 4rem; }
-    #about { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 2rem; }
-    .work-grid { grid-template-columns: 1fr; }
-    .work-card.wide { grid-column: span 1; }
-    .services-grid { grid-template-columns: 1fr; }
     nav { padding: 1.2rem 1.5rem; }
-    .nav-links { gap: 1.2rem; }
-    section { padding: 5rem 1.5rem; }
-    .hero-left { padding: 5rem 2rem 3rem; }
+    .nav-links { gap: 1.5rem; }
+    .hero { grid-template-columns: 1fr; height: auto; }
+    .hero-left { padding: 8rem 1.5rem 3rem; }
+    .hero-right { grid-template-rows: auto auto; }
+    .hero-right-top { padding: 2rem 1.5rem; min-height: 200px; }
+    .about, .contact { grid-template-columns: 1fr; }
+    .about-left, .about-right, .contact-left, .contact-right { padding: 3rem 1.5rem; }
+    .about-left { border-right: none; border-bottom: 1px solid var(--line); }
+    .contact-left { border-right: none; border-bottom: 1px solid var(--line); }
+    .work-grid { grid-template-columns: 1fr; }
+    .work-card, .work-card-wide { border-right: none; border-bottom: 1px solid var(--line); grid-column: span 1; }
+    .services { padding: 3rem 1.5rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .svc { border-right: none; }
+    .sec-marker, footer { padding: 1.2rem 1.5rem; }
   }
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-
-<!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">SD</a>
+  <a href="#" class="nav-logo">Sasho Dimitrov</a>
   <ul class="nav-links">
     <li><a href="#work">Work</a></li>
     <li><a href="#about">About</a></li>
@@ -462,237 +166,190 @@
   </ul>
 </nav>
 
-<!-- HERO -->
 <section class="hero" id="home">
   <div class="hero-left">
-    <p class="hero-tag">// Video Editor · Sofia, Bulgaria</p>
-    <h1 class="hero-name">SASHO<br><span>DIMI</span>TROV</h1>
-    <p class="hero-sub">Crafting compelling visual stories for events, conferences and interviews. Specialising in colour grading and multicam production.</p>
-    <a href="#work" class="hero-cta">View Work <span>→</span></a>
+    <div class="hero-left-bg"></div>
+    <p class="hero-eyebrow">Video Editor &amp; Colourist — Sofia</p>
+    <h1 class="hero-name">Sasho<br><em>Dimitrov</em></h1>
+    <p class="hero-role">Colour Grading · Multicam · Event Coverage</p>
+    <div class="hero-divider"></div>
+    <p class="hero-desc">Professional video editor with experience covering major international conferences and producing branded content for the gaming industry. Every frame considered. Every cut intentional.</p>
+    <a href="#work" class="hero-cta">View Work →</a>
   </div>
   <div class="hero-right">
-    <div class="hero-stats reveal">
-      <div>
-        <div class="stat-num">3<span>+</span></div>
-        <div class="stat-label">Years Experience</div>
-      </div>
-      <div>
-        <div class="stat-num">2</div>
-        <div class="stat-label">Major Conferences</div>
-      </div>
-      <div>
-        <div class="stat-num">C<span>1</span></div>
-        <div class="stat-label">English Cambridge</div>
-      </div>
-      <div>
-        <div class="stat-num">4<span>K</span></div>
-        <div class="stat-label">Colour Grading</div>
-      </div>
+    <div class="hero-right-top">
+      <p class="hero-quote">"The best edit is the one the audience <span>never notices.</span>"</p>
     </div>
-    <div class="hero-divider"></div>
-    <div class="hero-skills reveal">
-      <span class="skill-pill">DaVinci Resolve</span>
-      <span class="skill-pill">Colour Grading</span>
-      <span class="skill-pill">Multicam</span>
-      <span class="skill-pill">Event Coverage</span>
-      <span class="skill-pill">Interviews</span>
-      <span class="skill-pill">Social Reels</span>
+    <div class="hero-right-bottom">
+      <div class="hero-stat"><div class="hero-stat-num">3<sup>+</sup></div><div class="hero-stat-lbl">Years Experience</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">C<sup>1</sup></div><div class="hero-stat-lbl">English Level</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-lbl">Projects Below</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">4K</div><div class="hero-stat-lbl">Grade Ready</div></div>
     </div>
   </div>
 </section>
 
-<!-- WORK -->
-<section id="work">
-  <div class="work-header reveal">
-    <p class="section-label">// Selected Work</p>
-    <h2 class="section-title" style="color:#fff">RECENT<br>PROJECTS</h2>
-  </div>
-  <div class="work-grid">
+<div class="sec-marker reveal" id="work">
+  <span class="sec-marker-label">Selected Work</span>
+  <div class="sec-marker-line"></div>
+  <div class="sec-marker-dot"></div>
+</div>
 
-    <!-- Card 1 - wide -->
-    <div class="work-card wide reveal">
-      <div class="work-placeholder">
-        <div class="placeholder-icon">▶</div>
-        <span class="placeholder-text">Add your video link here</span>
-      </div>
-      <div class="work-card-inner">
-        <div class="work-card-title">SBC SUMMIT 2024</div>
-        <div class="work-card-meta">Event Coverage · Multicam</div>
-        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
-      </div>
-    </div>
+<div class="work-grid reveal">
 
-    <!-- Card 2 -->
-    <div class="work-card reveal">
-      <div class="work-placeholder">
-        <div class="placeholder-icon">▶</div>
-        <span class="placeholder-text">Add your video link here</span>
-      </div>
-      <div class="work-card-inner">
-        <div class="work-card-title">ICE LONDON</div>
-        <div class="work-card-meta">Event · Colour Grade</div>
-        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
-      </div>
+  <!-- ICE Barcelona Day 1 - wide -->
+  <div class="work-card work-card-wide">
+    <div class="work-thumb work-thumb-ratio">
+      <iframe src="https://www.youtube.com/embed/4-HdFlFfuuE?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="ICE Barcelona 2026 Day 1"></iframe>
     </div>
-
-    <!-- Card 3 -->
-    <div class="work-card reveal">
-      <div class="work-placeholder">
-        <div class="placeholder-icon">▶</div>
-        <span class="placeholder-text">Add your video link here</span>
-      </div>
-      <div class="work-card-inner">
-        <div class="work-card-title">INTERVIEW SERIES</div>
-        <div class="work-card-meta">Interview · Edit</div>
-        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
-      </div>
-    </div>
-
-    <!-- Card 4 -->
-    <div class="work-card reveal">
-      <div class="work-placeholder">
-        <div class="placeholder-icon">▶</div>
-        <span class="placeholder-text">Add your video link here</span>
-      </div>
-      <div class="work-card-inner">
-        <div class="work-card-title">PROJECT TITLE</div>
-        <div class="work-card-meta">Your Category Here</div>
-        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
-      </div>
-    </div>
-
-    <!-- Card 5 - wide -->
-    <div class="work-card wide reveal">
-      <div class="work-placeholder">
-        <div class="placeholder-icon">▶</div>
-        <span class="placeholder-text">Add your video link here</span>
-      </div>
-      <div class="work-card-inner">
-        <div class="work-card-title">SHOWREEL 2024</div>
-        <div class="work-card-meta">Compilation · Colour Grade · Multicam</div>
-        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section id="about">
-  <div class="about-left reveal">
-    <p class="section-label">// About</p>
-    <h2 class="section-title">THE EDITOR<br>BEHIND<br>THE CUT</h2>
-    <p class="about-body">
-      Based in Sofia, I'm a video editor with <strong>3+ years of professional experience</strong> producing content for some of the biggest events in the gaming and betting industry — including <strong>SBC Summit</strong> and <strong>ICE London</strong>.<br><br>
-      I specialise in <strong>multicam event coverage</strong>, <strong>interview editing</strong>, and <strong>cinematic colour grading</strong> in DaVinci Resolve Studio. Every cut is intentional. Every grade tells a story.
-    </p>
-  </div>
-  <div class="about-right reveal">
-    <div class="about-fact">
-      <div class="about-fact-icon">🎬</div>
-      <div class="about-fact-title">Multicam Production</div>
-      <div class="about-fact-text">Synchronising multiple camera angles for live event coverage with precision and speed.</div>
-    </div>
-    <div class="about-fact">
-      <div class="about-fact-icon">🎨</div>
-      <div class="about-fact-title">Colour Grading</div>
-      <div class="about-fact-text">Advanced grading in DaVinci Resolve Studio — from broadcast-ready to cinematic looks.</div>
-    </div>
-    <div class="about-fact">
-      <div class="about-fact-icon">🎤</div>
-      <div class="about-fact-title">Interview Editing</div>
-      <div class="about-fact-text">Clean, professional interview cuts for corporate content and conference keynotes.</div>
-    </div>
-    <div class="about-fact">
-      <div class="about-fact-icon">⚡</div>
-      <div class="about-fact-title">Fast Turnaround</div>
-      <div class="about-fact-text">Day-for-day delivery experience. Tight deadlines are not a problem.</div>
+    <div class="work-info">
+      <p class="work-cat">Event Coverage</p>
+      <h3 class="work-name">ICE Barcelona 2026 — Day 1</h3>
+      <p class="work-desc">Day 1 event coverage from ICE Barcelona 2026, one of the world's premier gaming industry conferences. Multicam production and colour graded in DaVinci Resolve.</p>
     </div>
   </div>
-</section>
 
-<!-- SERVICES -->
-<section id="services">
-  <p class="section-label" style="text-align:center">// What I Do</p>
-  <h2 class="section-title" style="text-align:center; max-width:700px; margin:0 auto">SERVICES</h2>
-  <div class="services-grid reveal">
-    <div class="service-item">
-      <div class="service-num">01</div>
-      <div class="service-title">Event Coverage</div>
-      <div class="service-text">Full post-production for conferences, summits and live events. From raw multicam footage to polished broadcast-ready content.</div>
+  <!-- ICE Interview -->
+  <div class="work-card">
+    <div class="work-thumb work-thumb-ratio">
+      <iframe src="https://www.youtube.com/embed/_hQuHqACHD4?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="ICE 2026 Interview"></iframe>
     </div>
-    <div class="service-item">
-      <div class="service-num">02</div>
-      <div class="service-title">Colour Grading</div>
-      <div class="service-text">Professional colour grading and correction in DaVinci Resolve Studio. Cinematic, corporate or social — any look, any format.</div>
-    </div>
-    <div class="service-item">
-      <div class="service-num">03</div>
-      <div class="service-title">Interview Editing</div>
-      <div class="service-text">Clean, engaging cuts for talking-head interviews, corporate content and documentary-style productions.</div>
-    </div>
-    <div class="service-item">
-      <div class="service-num">04</div>
-      <div class="service-title">Social Media Reels</div>
-      <div class="service-text">Trendy, platform-optimised short-form content for Instagram, TikTok, LinkedIn and YouTube Shorts.</div>
-    </div>
-    <div class="service-item">
-      <div class="service-num">05</div>
-      <div class="service-title">Multicam Editing</div>
-      <div class="service-text">Multi-camera synchronisation and editing for panels, interviews, performances and live recordings.</div>
-    </div>
-    <div class="service-item">
-      <div class="service-num">06</div>
-      <div class="service-title">Day-for-Day Delivery</div>
-      <div class="service-text">Fast turnaround editing for time-sensitive content pipelines. Consistent quality under pressure.</div>
+    <div class="work-info">
+      <p class="work-cat">Interview</p>
+      <h3 class="work-name">ICE 2026 — Sesame CEO &amp; Alea Founder</h3>
+      <p class="work-desc">Broadcast-ready interview edit with the CEO of Sesame and the Founder of Alea, filmed at ICE Barcelona 2026.</p>
     </div>
   </div>
-</section>
 
-<!-- CONTACT -->
-<section id="contact">
-  <p class="section-label">// Get In Touch</p>
-  <h2 class="section-title reveal">LET'S<br>WORK<br>TOGETHER</h2>
-  <p class="contact-sub reveal">Available for freelance projects, long-term contracts and event coverage worldwide.</p>
-  <a href="mailto:sasho-dimitrov@outlook.com" class="contact-email reveal">sasho-dimitrov@outlook.com</a>
-  <div class="contact-links reveal">
-    <a href="https://www.linkedin.com/in/sasho-dimitrov-630367385/" class="contact-link" target="_blank">LinkedIn</a>
-    <span style="color:rgba(255,255,255,0.1)">·</span>
-    <a href="tel:+359885086600" class="contact-link">+359 885 086 600</a>
-    <span style="color:rgba(255,255,255,0.1)">·</span>
-    <a href="#" class="contact-link">Sofia, Bulgaria</a>
+  <!-- Vegas Legends -->
+  <div class="work-card">
+    <div class="work-thumb work-thumb-ratio">
+      <iframe src="https://www.youtube.com/embed/N_-fMAYROl4?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Vegas Legends Interview"></iframe>
+    </div>
+    <div class="work-info">
+      <p class="work-cat">Interview</p>
+      <h3 class="work-name">Vegas Legends — Co-Founders</h3>
+      <p class="work-desc">Interview with the co-founders of Vegas Legends, filmed on 8th March. Clean, professional talking-head edit.</p>
+    </div>
   </div>
-</section>
 
-<!-- FOOTER -->
+  <!-- MCMS x MerkurXTip - wide -->
+  <div class="work-card work-card-wide">
+    <div class="work-thumb work-thumb-ratio">
+      <iframe src="https://www.youtube.com/embed/KofJvsE4yMQ?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Scan to Play MCMS x MerkurXTip"></iframe>
+    </div>
+    <div class="work-info">
+      <p class="work-cat">Product Video</p>
+      <h3 class="work-name">Scan to Play — MCMS x MerkurXTip</h3>
+      <p class="work-desc">Official product video for the Scan to Play module — a collaboration between MCMS and MerkurXTip. Colour graded and edited in DaVinci Resolve Studio.</p>
+    </div>
+  </div>
+
+  <!-- MCMS Short -->
+  <div class="work-card">
+    <div class="work-thumb work-thumb-ratio">
+      <iframe src="https://www.youtube.com/embed/EvMUeWVe8XU?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Scan to Play Short"></iframe>
+    </div>
+    <div class="work-info">
+      <p class="work-cat">Product Video</p>
+      <h3 class="work-name">Scan to Play — MCMS Sofia</h3>
+      <p class="work-desc">Short-form product video for the Scan to Play module, produced for MCMS Sofia.</p>
+    </div>
+  </div>
+
+  <!-- Imperia Casino -->
+  <div class="work-card">
+    <div class="work-thumb work-thumb-ratio">
+      <iframe src="https://www.youtube.com/embed/6Mx9O1YAKCs?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Imperia Casino Sofia"></iframe>
+    </div>
+    <div class="work-info">
+      <p class="work-cat">Event Coverage</p>
+      <h3 class="work-name">Imperia Casino Sofia</h3>
+      <p class="work-desc">Event coverage and video production at Imperia Casino, Sofia. Colour graded in DaVinci Resolve Studio.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="sec-marker reveal" id="about">
+  <span class="sec-marker-label">About</span>
+  <div class="sec-marker-line"></div>
+  <div class="sec-marker-dot"></div>
+</div>
+<div class="about reveal">
+  <div class="about-left">
+    <p class="hero-eyebrow">The Editor</p>
+    <h2 class="about-heading">Based in Sofia.<br><em>Working worldwide.</em></h2>
+    <p class="about-body">With <strong>nearly three years of professional experience</strong> at StudioY (2022–2024), I built a reputation for fast, precise delivery without compromising quality. My work spans major international conferences — <strong>SBC Summit</strong> and <strong>ICE Barcelona</strong> — as well as branded product videos and executive interviews for clients across the gaming and entertainment industries.<br><br>I work in <strong>DaVinci Resolve Studio</strong>, with a focus on colour consistency and a cinematic look that elevates any production. Outside the edit suite, I am a student at the Medical Faculty of Sofia University — a discipline that sharpens attention to detail and systematic thinking.</p>
+  </div>
+  <div class="about-right">
+    <p class="about-section-title">Technical Skills</p>
+    <div class="skill-row"><span class="skill-name">DaVinci Resolve Studio</span><span class="skill-level">Advanced</span></div>
+    <div class="skill-row"><span class="skill-name">Colour Grading &amp; LUTs</span><span class="skill-level">Advanced</span></div>
+    <div class="skill-row"><span class="skill-name">Multicam Editing</span><span class="skill-level">Professional</span></div>
+    <div class="skill-row"><span class="skill-name">Interview Editing</span><span class="skill-level">Professional</span></div>
+    <div class="skill-row"><span class="skill-name">Social Media Formats</span><span class="skill-level">Proficient</span></div>
+    <div class="skill-row"><span class="skill-name">Day-for-Day Delivery</span><span class="skill-level">Professional</span></div>
+    <div class="lang-block">
+      <p class="about-section-title">Languages</p>
+      <div class="lang-item"><span>Bulgarian</span><span>Native</span></div>
+      <div class="lang-item"><span>English</span><span>Cambridge C1</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-marker reveal" id="services">
+  <span class="sec-marker-label">Services</span>
+  <div class="sec-marker-line"></div>
+  <div class="sec-marker-dot"></div>
+</div>
+<div class="services reveal">
+  <p class="hero-eyebrow">What I Offer</p>
+  <h2 class="services-heading">Expertise built<br><em>on the ground.</em></h2>
+  <div class="services-grid">
+    <div class="svc"><p class="svc-num">i.</p><p class="svc-title">Event Coverage</p><p class="svc-desc">Full post-production for conferences, summits and live events. From raw multicam footage to polished broadcast-ready content.</p></div>
+    <div class="svc"><p class="svc-num">ii.</p><p class="svc-title">Colour Grading</p><p class="svc-desc">Professional grading in DaVinci Resolve Studio. Cinematic, corporate or social — any look, any format.</p></div>
+    <div class="svc"><p class="svc-num">iii.</p><p class="svc-title">Interview Editing</p><p class="svc-desc">Clean, engaging cuts for talking-head interviews, corporate content and documentary-style productions.</p></div>
+    <div class="svc"><p class="svc-num">iv.</p><p class="svc-title">Multicam Production</p><p class="svc-desc">Multi-camera synchronisation for panels, interviews, performances and live recordings.</p></div>
+    <div class="svc"><p class="svc-num">v.</p><p class="svc-title">Product Videos</p><p class="svc-desc">Polished branded product videos for launches, demos and promotional campaigns.</p></div>
+    <div class="svc"><p class="svc-num">vi.</p><p class="svc-title">Fast Turnaround</p><p class="svc-desc">Day-for-day delivery for time-sensitive pipelines. Three years of meeting tight deadlines without compromise.</p></div>
+  </div>
+</div>
+
+<div class="sec-marker reveal" id="contact">
+  <span class="sec-marker-label">Contact</span>
+  <div class="sec-marker-line"></div>
+  <div class="sec-marker-dot"></div>
+</div>
+<div class="contact reveal">
+  <div class="contact-left">
+    <p class="hero-eyebrow">Get In Touch</p>
+    <h2 class="contact-heading">Let's make<br><em>something great.</em></h2>
+    <p class="contact-sub">Available for freelance projects, long-term contracts and event coverage. Based in Sofia — open to travel and remote work worldwide.</p>
+  </div>
+  <div class="contact-right">
+    <div class="contact-item"><p class="contact-item-label">Email</p><a href="mailto:sasho-dimitrov@outlook.com" class="contact-item-value">sasho-dimitrov@outlook.com</a></div>
+    <div class="contact-item"><p class="contact-item-label">Phone</p><a href="tel:+359885086600" class="contact-item-value">+359 885 086 600</a></div>
+    <div class="contact-item"><p class="contact-item-label">LinkedIn</p><a href="https://www.linkedin.com/in/sasho-dimitrov-630367385/" target="_blank" class="contact-item-value">linkedin.com/in/sasho-dimitrov</a></div>
+    <div class="contact-item"><p class="contact-item-label">Location</p><span class="contact-item-value" style="cursor:default">Sofia, Bulgaria</span></div>
+  </div>
+</div>
+
 <footer>
   <span class="footer-copy">© 2025 Sasho Dimitrov. All rights reserved.</span>
   <span class="footer-logo">SD</span>
 </footer>
 
 <script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
-  });
-  document.querySelectorAll('a, button, .work-card, .service-item, .about-fact').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
-  });
-
-  // Scroll reveal
-  const revealEls = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 80);
-        observer.unobserve(entry.target);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        obs.unobserve(e.target);
       }
     });
-  }, { threshold: 0.1 });
-  revealEls.forEach(el => observer.observe(el));
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
