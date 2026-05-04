@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sasho Dimitrov — Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:     #0D0D0F;
+    --paper:   #F7F5F0;
+    --red:     #E94F37;
+    --red-dim: #b83c28;
+    --smoke:   #1A1A2E;
+    --muted:   #6B6B7A;
+    --border:  #E0DDD6;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── Custom cursor ── */
+  .cursor {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+    width: 12px; height: 12px;
+    background: var(--red);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease, background 0.2s;
+    mix-blend-mode: multiply;
+  }
+  .cursor.big { width: 48px; height: 48px; background: var(--red); opacity: 0.3; }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.4rem 3rem;
+    mix-blend-mode: multiply;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--red); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+  }
+  .hero-left {
+    background: var(--smoke);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 5rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left::before {
+    content: 'SD';
+    position: absolute; top: -0.15em; left: -0.05em;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(14rem, 22vw, 20rem);
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 8vw, 7rem);
+    line-height: 0.92;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+  .hero-name span { color: var(--red); }
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.7;
+    max-width: 320px;
+  }
+  .hero-cta {
+    margin-top: 2.5rem;
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--red);
+    text-decoration: none;
+    border-bottom: 1px solid var(--red);
+    padding-bottom: 0.25rem;
+    width: fit-content;
+    transition: gap 0.2s;
+  }
+  .hero-cta:hover { gap: 1.2rem; }
+
+  .hero-right {
+    background: var(--paper);
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 4rem 5rem;
+    border-left: 1px solid var(--border);
+  }
+  .hero-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.8rem;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .stat-num span { color: var(--red); }
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+  .hero-divider {
+    width: 40px; height: 2px;
+    background: var(--red);
+    margin: 3rem 0;
+  }
+  .hero-skills {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+  }
+  .skill-pill {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .skill-pill:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── Section base ── */
+  section { padding: 7rem 3rem; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Work grid ── */
+  #work { background: var(--smoke); }
+  #work .section-title { color: #fff; }
+  #work .section-label { margin-bottom: 3rem; }
+  .work-header { max-width: 1200px; margin: 0 auto 4rem; }
+
+  .work-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: rgba(255,255,255,0.06);
+  }
+  .work-card {
+    background: var(--smoke);
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16/10;
+    cursor: none;
+  }
+  .work-card.wide { grid-column: span 2; }
+  .work-thumb {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: transform 0.6s ease, opacity 0.4s;
+  }
+  .work-card-inner {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(13,13,15,0.9) 0%, transparent 60%);
+    opacity: 1;
+    transition: opacity 0.3s;
+  }
+  .work-card:hover .work-card-inner { opacity: 1; }
+  .work-card:hover .work-thumb { transform: scale(1.04); opacity: 1; }
+  .work-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 0.5rem;
+    background: linear-gradient(135deg, rgba(233,79,55,0.08) 0%, rgba(26,26,46,0.6) 100%);
+  }
+  .placeholder-icon {
+    width: 48px; height: 48px;
+    border: 2px solid rgba(233,79,55,0.4);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--red);
+    font-size: 1.2rem;
+    opacity: 0.7;
+  }
+  .placeholder-text {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+  }
+  .work-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+    color: #fff;
+    line-height: 1;
+  }
+  .work-card-meta {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-top: 0.3rem;
+  }
+  .work-card-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin-top: 0.8rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .work-card-link:hover { color: var(--red); }
+  .work-card-link .arrow { transition: transform 0.2s; }
+  .work-card-link:hover .arrow { transform: translateX(4px); }
+
+  /* ── About ── */
+  #about {
+    background: var(--paper);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+    max-width: none;
+    padding: 7rem 4rem;
+  }
+  .about-left {}
+  .about-body {
+    margin-top: 2rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 480px;
+  }
+  .about-body strong { color: var(--ink); font-weight: 500; }
+  .about-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .about-fact {
+    padding: 1.8rem 1.5rem;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .about-fact:hover { border-color: var(--red); }
+  .about-fact-icon {
+    font-size: 1.4rem; margin-bottom: 0.8rem;
+  }
+  .about-fact-title {
+    font-weight: 500; font-size: 0.88rem; margin-bottom: 0.3rem;
+  }
+  .about-fact-text {
+    font-size: 0.78rem; color: var(--muted); line-height: 1.5;
+  }
+
+  /* ── Services ── */
+  #services {
+    background: #F0EDE6;
+    padding: 7rem 4rem;
+  }
+  .services-grid {
+    max-width: 1100px;
+    margin: 3.5rem auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .service-item {
+    background: #F0EDE6;
+    padding: 2.5rem 2rem;
+    transition: background 0.25s;
+  }
+  .service-item:hover { background: var(--ink); }
+  .service-item:hover .service-title,
+  .service-item:hover .service-text { color: rgba(255,255,255,0.8); }
+  .service-item:hover .service-num { color: var(--red); }
+  .service-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--border);
+    line-height: 1;
+    transition: color 0.25s;
+  }
+  .service-title {
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 1rem 0 0.6rem;
+    transition: color 0.25s;
+  }
+  .service-text {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.65;
+    transition: color 0.25s;
+  }
+
+  /* ── Contact ── */
+  #contact {
+    background: var(--smoke);
+    text-align: center;
+    padding: 8rem 3rem;
+  }
+  #contact .section-title { color: #fff; font-size: clamp(3rem, 8vw, 6rem); }
+  .contact-sub {
+    margin: 1.5rem auto 0;
+    max-width: 400px;
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.7;
+  }
+  .contact-email {
+    display: inline-block;
+    margin-top: 3rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    letter-spacing: 0.06em;
+    color: var(--red);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .contact-email:hover { border-color: var(--red); }
+  .contact-links {
+    display: flex; justify-content: center; gap: 2rem;
+    margin-top: 2.5rem;
+  }
+  .contact-link {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .contact-link:hover { color: var(--red); }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--smoke);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 1.5rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.18);
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.18);
+  }
+
+  /* ── Reveal animation ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { padding-top: 4rem; }
+    #about { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 2rem; }
+    .work-grid { grid-template-columns: 1fr; }
+    .work-card.wide { grid-column: span 1; }
+    .services-grid { grid-template-columns: 1fr; }
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { gap: 1.2rem; }
+    section { padding: 5rem 1.5rem; }
+    .hero-left { padding: 5rem 2rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">SD</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <p class="hero-tag">// Video Editor · Sofia, Bulgaria</p>
+    <h1 class="hero-name">SASHO<br><span>DIMI</span>TROV</h1>
+    <p class="hero-sub">Crafting compelling visual stories for events, conferences and interviews. Specialising in colour grading and multicam production.</p>
+    <a href="#work" class="hero-cta">View Work <span>→</span></a>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stats reveal">
+      <div>
+        <div class="stat-num">3<span>+</span></div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div>
+        <div class="stat-num">2</div>
+        <div class="stat-label">Major Conferences</div>
+      </div>
+      <div>
+        <div class="stat-num">C<span>1</span></div>
+        <div class="stat-label">English Cambridge</div>
+      </div>
+      <div>
+        <div class="stat-num">4<span>K</span></div>
+        <div class="stat-label">Colour Grading</div>
+      </div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-skills reveal">
+      <span class="skill-pill">DaVinci Resolve</span>
+      <span class="skill-pill">Colour Grading</span>
+      <span class="skill-pill">Multicam</span>
+      <span class="skill-pill">Event Coverage</span>
+      <span class="skill-pill">Interviews</span>
+      <span class="skill-pill">Social Reels</span>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="work-header reveal">
+    <p class="section-label">// Selected Work</p>
+    <h2 class="section-title" style="color:#fff">RECENT<br>PROJECTS</h2>
+  </div>
+  <div class="work-grid">
+
+    <!-- Card 1 - wide -->
+    <div class="work-card wide reveal">
+      <div class="work-placeholder">
+        <div class="placeholder-icon">▶</div>
+        <span class="placeholder-text">Add your video link here</span>
+      </div>
+      <div class="work-card-inner">
+        <div class="work-card-title">SBC SUMMIT 2024</div>
+        <div class="work-card-meta">Event Coverage · Multicam</div>
+        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="work-card reveal">
+      <div class="work-placeholder">
+        <div class="placeholder-icon">▶</div>
+        <span class="placeholder-text">Add your video link here</span>
+      </div>
+      <div class="work-card-inner">
+        <div class="work-card-title">ICE LONDON</div>
+        <div class="work-card-meta">Event · Colour Grade</div>
+        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="work-card reveal">
+      <div class="work-placeholder">
+        <div class="placeholder-icon">▶</div>
+        <span class="placeholder-text">Add your video link here</span>
+      </div>
+      <div class="work-card-inner">
+        <div class="work-card-title">INTERVIEW SERIES</div>
+        <div class="work-card-meta">Interview · Edit</div>
+        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="work-card reveal">
+      <div class="work-placeholder">
+        <div class="placeholder-icon">▶</div>
+        <span class="placeholder-text">Add your video link here</span>
+      </div>
+      <div class="work-card-inner">
+        <div class="work-card-title">PROJECT TITLE</div>
+        <div class="work-card-meta">Your Category Here</div>
+        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
+      </div>
+    </div>
+
+    <!-- Card 5 - wide -->
+    <div class="work-card wide reveal">
+      <div class="work-placeholder">
+        <div class="placeholder-icon">▶</div>
+        <span class="placeholder-text">Add your video link here</span>
+      </div>
+      <div class="work-card-inner">
+        <div class="work-card-title">SHOWREEL 2024</div>
+        <div class="work-card-meta">Compilation · Colour Grade · Multicam</div>
+        <a href="#" class="work-card-link">Watch <span class="arrow">→</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left reveal">
+    <p class="section-label">// About</p>
+    <h2 class="section-title">THE EDITOR<br>BEHIND<br>THE CUT</h2>
+    <p class="about-body">
+      Based in Sofia, I'm a video editor with <strong>3+ years of professional experience</strong> producing content for some of the biggest events in the gaming and betting industry — including <strong>SBC Summit</strong> and <strong>ICE London</strong>.<br><br>
+      I specialise in <strong>multicam event coverage</strong>, <strong>interview editing</strong>, and <strong>cinematic colour grading</strong> in DaVinci Resolve Studio. Every cut is intentional. Every grade tells a story.
+    </p>
+  </div>
+  <div class="about-right reveal">
+    <div class="about-fact">
+      <div class="about-fact-icon">🎬</div>
+      <div class="about-fact-title">Multicam Production</div>
+      <div class="about-fact-text">Synchronising multiple camera angles for live event coverage with precision and speed.</div>
+    </div>
+    <div class="about-fact">
+      <div class="about-fact-icon">🎨</div>
+      <div class="about-fact-title">Colour Grading</div>
+      <div class="about-fact-text">Advanced grading in DaVinci Resolve Studio — from broadcast-ready to cinematic looks.</div>
+    </div>
+    <div class="about-fact">
+      <div class="about-fact-icon">🎤</div>
+      <div class="about-fact-title">Interview Editing</div>
+      <div class="about-fact-text">Clean, professional interview cuts for corporate content and conference keynotes.</div>
+    </div>
+    <div class="about-fact">
+      <div class="about-fact-icon">⚡</div>
+      <div class="about-fact-title">Fast Turnaround</div>
+      <div class="about-fact-text">Day-for-day delivery experience. Tight deadlines are not a problem.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <p class="section-label" style="text-align:center">// What I Do</p>
+  <h2 class="section-title" style="text-align:center; max-width:700px; margin:0 auto">SERVICES</h2>
+  <div class="services-grid reveal">
+    <div class="service-item">
+      <div class="service-num">01</div>
+      <div class="service-title">Event Coverage</div>
+      <div class="service-text">Full post-production for conferences, summits and live events. From raw multicam footage to polished broadcast-ready content.</div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">02</div>
+      <div class="service-title">Colour Grading</div>
+      <div class="service-text">Professional colour grading and correction in DaVinci Resolve Studio. Cinematic, corporate or social — any look, any format.</div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">03</div>
+      <div class="service-title">Interview Editing</div>
+      <div class="service-text">Clean, engaging cuts for talking-head interviews, corporate content and documentary-style productions.</div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">04</div>
+      <div class="service-title">Social Media Reels</div>
+      <div class="service-text">Trendy, platform-optimised short-form content for Instagram, TikTok, LinkedIn and YouTube Shorts.</div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">05</div>
+      <div class="service-title">Multicam Editing</div>
+      <div class="service-text">Multi-camera synchronisation and editing for panels, interviews, performances and live recordings.</div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">06</div>
+      <div class="service-title">Day-for-Day Delivery</div>
+      <div class="service-text">Fast turnaround editing for time-sensitive content pipelines. Consistent quality under pressure.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">// Get In Touch</p>
+  <h2 class="section-title reveal">LET'S<br>WORK<br>TOGETHER</h2>
+  <p class="contact-sub reveal">Available for freelance projects, long-term contracts and event coverage worldwide.</p>
+  <a href="mailto:sasho-dimitrov@outlook.com" class="contact-email reveal">sasho-dimitrov@outlook.com</a>
+  <div class="contact-links reveal">
+    <a href="https://www.linkedin.com/in/sasho-dimitrov-630367385/" class="contact-link" target="_blank">LinkedIn</a>
+    <span style="color:rgba(255,255,255,0.1)">·</span>
+    <a href="tel:+359885086600" class="contact-link">+359 885 086 600</a>
+    <span style="color:rgba(255,255,255,0.1)">·</span>
+    <a href="#" class="contact-link">Sofia, Bulgaria</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-copy">© 2025 Sasho Dimitrov. All rights reserved.</span>
+  <span class="footer-logo">SD</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .work-card, .service-item, .about-fact').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
