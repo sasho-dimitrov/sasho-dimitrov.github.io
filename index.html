@@ -334,6 +334,10 @@
       <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="7" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
+    <filter id="chalk-wobble" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="17" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
   </defs>
   <rect width="100%" height="100%" fill="url(#brickPattern)"/>
   <rect width="100%" height="100%" filter="url(#brickGrain)" opacity="0.06"/>
@@ -353,19 +357,19 @@
   <path d="M 60 1180 L 140 1230 L 110 1340 L 200 1420" stroke="#050403" stroke-width="2" fill="none" opacity="0.5"/>
   <path d="M 1300 1500 L 1240 1580 L 1290 1660" stroke="#050403" stroke-width="1.5" fill="none" opacity="0.42"/>
 
-  <!-- crime-scene chalk marks (positioned to stay within typical viewport height since this layer is fixed) -->
-  <g opacity="0.4" stroke="#f0ece1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-dasharray="3 8" transform="translate(60,300) scale(1.15) rotate(-3)">
-    <circle cx="60" cy="20" r="18"/>
-    <path d="M42,45 L0,80 L-15,75 M42,45 L18,95 L15,110 M78,45 L120,80 L135,75 M78,45 L102,95 L105,110 M60,38 L60,130 L30,190 L15,235 M60,130 L90,190 L110,235"/>
+  <!-- crime-scene chalk outline — classic 90s-movie body outline, bold continuous silhouette -->
+  <g opacity="0.52" filter="url(#chalk-wobble)" transform="translate(30,20) scale(1.85) rotate(-2)">
+    <circle cx="130" cy="30" r="27" fill="none" stroke="#f5f0e3" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M95,60 L40,40 L10,15 L70,90 L75,160 L65,190 L45,260 L20,320 L55,335 L75,270 L100,200 L130,195 L160,265 L215,330 L205,345 L185,260 L165,195 L185,160 L190,90 L230,110 L255,140 L165,60 Z"
+      fill="none" stroke="#f5f0e3" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
   </g>
   <g opacity="0.55" font-family="'Space Mono',monospace">
-    <path d="M110,470 L128,435 L146,470 Z" fill="none" stroke="#f0ece1" stroke-width="2"/>
-    <text x="128" y="463" font-size="12" fill="#f0ece1" text-anchor="middle">1</text>
-    <path d="M215,500 L233,465 L251,500 Z" fill="none" stroke="#f0ece1" stroke-width="2"/>
-    <text x="233" y="493" font-size="12" fill="#f0ece1" text-anchor="middle">2</text>
+    <path d="M115,600 L136,558 L157,600 Z" fill="none" stroke="#f0ece1" stroke-width="3"/>
+    <text x="136" y="591" font-size="16" fill="#f0ece1" text-anchor="middle">1</text>
+    <path d="M420,120 L441,78 L462,120 Z" fill="none" stroke="#f0ece1" stroke-width="3"/>
+    <text x="441" y="111" font-size="16" fill="#f0ece1" text-anchor="middle">2</text>
   </g>
-  <path d="M 145 425 L 225 480" stroke="#f0ece1" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.35"/>
-  <text x="1250" y="130" font-family="'Permanent Marker',cursive" font-size="15" fill="#f0ece1" opacity="0.3" transform="rotate(-3 1250 130)">DO NOT CROSS</text>
+  <text x="1230" y="130" font-family="'Permanent Marker',cursive" font-size="15" fill="#f0ece1" opacity="0.3" transform="rotate(-3 1230 130)">DO NOT CROSS</text>
 </svg>
 <div class="brick-scrim"></div>
 
