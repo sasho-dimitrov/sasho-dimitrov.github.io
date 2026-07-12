@@ -92,11 +92,11 @@
 
   /* NAV */
   nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between;
+    position: fixed; top: -100px; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between;
     padding: 1.1rem clamp(1.4rem, 4vw, 3rem); background: rgba(250,249,245,0.97);
-    border-bottom: 1px solid var(--line); transform: translateY(-110%); transition: transform 0.7s var(--ease) 0.15s;
+    border-bottom: 1px solid var(--line); transition: top 0.7s var(--ease) 0.15s;
   }
-  nav.nav-in { transform: translateY(0); }
+  nav.nav-in { top: 0; }
   .nav-logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
   .nav-logo::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--coral); display: inline-block; }
   .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
