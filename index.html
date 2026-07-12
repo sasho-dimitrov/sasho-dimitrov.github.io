@@ -34,6 +34,10 @@
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 10px; }
   body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; font-weight: 400; overflow-x: hidden; position: relative; }
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 997; pointer-events: none; opacity: 0.035; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
   h1, h2, h3, .display { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: -0.01em; }
   .accent { color: var(--coral); }
   .grad-text { background: linear-gradient(120deg, #fff 0%, var(--blue) 55%, var(--coral) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -43,7 +47,6 @@
   @keyframes reveal-up { to { transform: translateY(0); } }
   @keyframes float-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
   @keyframes hint-bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
-  @keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   @keyframes glow-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(91,124,255,0.35); } 50% { box-shadow: 0 0 0 10px rgba(91,124,255,0); } }
   @keyframes reveal-in { to { opacity: 1; transform: translateY(0); } }
   @keyframes line-draw { to { transform: scaleX(1); } }
@@ -156,12 +159,6 @@
   .stat-num sup { font-size: 0.9rem; }
   .stat-lbl { display: block; margin-top: 0.3rem; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.03em; color: var(--ink-faint); }
 
-  /* MARQUEE */
-  .marquee { overflow: hidden; white-space: nowrap; background: linear-gradient(90deg, var(--blue), #7C5CFF); position: relative; z-index: 2; }
-  .marquee-track { display: inline-block; padding: 0.75rem 0; animation: marquee-scroll 28s linear infinite; }
-  .marquee-track span { font-family: 'Space Grotesk', sans-serif; font-size: 0.92rem; font-weight: 700; color: #fff; padding: 0 1.5rem; display: inline-flex; align-items: center; gap: 1rem; }
-  .marquee-track span::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--yellow); }
-
   /* SECTION MARKER */
   .sec-marker { display: flex; align-items: center; gap: 1.2rem; padding: 2.6rem 0 1.6rem; }
   .sec-marker-line { flex: 1; height: 2px; background: var(--line); position: relative; overflow: hidden; }
@@ -172,6 +169,10 @@
   .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; }
   .work-card { overflow: hidden; transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s var(--ease); }
   .work-card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.22); box-shadow: 0 24px 50px rgba(0,0,0,0.45); }
+  .work-card.cat-blue:hover   { border-color: rgba(91,124,255,0.5);  box-shadow: 0 26px 60px rgba(91,124,255,0.28); }
+  .work-card.cat-coral:hover  { border-color: rgba(255,110,98,0.5); box-shadow: 0 26px 60px rgba(255,110,98,0.28); }
+  .work-card.cat-mint:hover   { border-color: rgba(41,227,174,0.5); box-shadow: 0 26px 60px rgba(41,227,174,0.28); }
+  .work-card.cat-yellow:hover { border-color: rgba(255,201,60,0.5); box-shadow: 0 26px 60px rgba(255,201,60,0.28); }
   .work-thumb { position: relative; overflow: hidden; background: #000; }
   .work-thumb-ratio { padding-top: 56.25%; }
   .work-thumb iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
@@ -181,7 +182,9 @@
   .work-desc { margin-top: 0.55rem; font-size: 0.85rem; line-height: 1.5; color: var(--ink-soft); }
 
   /* ABOUT */
-  .about { display: grid; grid-template-columns: 1.1fr 1fr; gap: 3.5rem; padding-bottom: 1rem; }
+  .about { display: grid; grid-template-columns: 1.1fr 1fr; gap: 3.5rem; padding-bottom: 1rem; position: relative; }
+  .about::before { content: ''; position: absolute; top: -15%; right: -8%; width: 420px; height: 420px; background: radial-gradient(circle, var(--blue-glow), transparent 70%); filter: blur(50px); z-index: 0; pointer-events: none; }
+  .about-left, .about-right { position: relative; z-index: 1; }
   .about-heading { font-size: clamp(2rem, 3.2vw, 2.9rem); line-height: 1.08; margin-top: 0.6rem; color: #fff; }
   .about-body { margin-top: 1.5rem; font-size: 0.98rem; line-height: 1.65; color: var(--ink-soft); }
   .about-body strong { color: #fff; font-weight: 700; }
@@ -195,7 +198,9 @@
   .lang-item span:last-child { color: var(--ink-soft); font-weight: 500; font-size: 0.84rem; }
 
   /* SERVICES */
-  .services { padding: 1rem 0 1rem; }
+  .services { padding: 1rem 0 1rem; position: relative; }
+  .services::before { content: ''; position: absolute; top: 10%; left: -10%; width: 380px; height: 380px; background: radial-gradient(circle, var(--coral-glow), transparent 70%); filter: blur(50px); z-index: 0; pointer-events: none; }
+  .services-heading, .services-grid, .services > .pill { position: relative; z-index: 1; }
   .services-heading { font-size: clamp(2.1rem, 3.6vw, 3.2rem); line-height: 1.08; margin-top: 0.6rem; margin-bottom: 2.4rem; color: #fff; }
   .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
   .svc { padding: 1.8rem 1.6rem; border-radius: var(--radius); transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease); }
@@ -365,13 +370,6 @@
 
 <div class="bg-fade-out">
 
-<div class="marquee">
-  <div class="marquee-track">
-    <span>Colour Grading</span><span>Multicam Production</span><span>Event Coverage</span><span>DaVinci Resolve Studio</span><span>Available for Freelance</span><span>Sofia, Bulgaria</span>
-    <span>Colour Grading</span><span>Multicam Production</span><span>Event Coverage</span><span>DaVinci Resolve Studio</span><span>Available for Freelance</span><span>Sofia, Bulgaria</span>
-  </div>
-</div>
-
 <div class="wrap">
 
   <div class="sec-marker reveal" id="work">
@@ -382,7 +380,7 @@
 
   <div class="work-grid reveal">
 
-    <div class="work-card glass-card">
+    <div class="work-card glass-card cat-blue">
       <div class="work-thumb work-thumb-ratio">
         <iframe src="https://www.youtube.com/embed/4-HdFlFfuuE?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="ICE Barcelona 2026 Day 1"></iframe>
       </div>
@@ -393,7 +391,7 @@
       </div>
     </div>
 
-    <div class="work-card glass-card">
+    <div class="work-card glass-card cat-coral">
       <div class="work-thumb work-thumb-ratio">
         <iframe src="https://www.youtube.com/embed/_hQuHqACHD4?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="ICE 2026 Interview"></iframe>
       </div>
@@ -404,7 +402,7 @@
       </div>
     </div>
 
-    <div class="work-card glass-card">
+    <div class="work-card glass-card cat-coral">
       <div class="work-thumb work-thumb-ratio">
         <iframe src="https://www.youtube.com/embed/N_-fMAYROl4?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Vegas Legends Interview"></iframe>
       </div>
@@ -415,7 +413,7 @@
       </div>
     </div>
 
-    <div class="work-card glass-card">
+    <div class="work-card glass-card cat-mint">
       <div class="work-thumb work-thumb-ratio">
         <iframe src="https://www.youtube.com/embed/KofJvsE4yMQ?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Scan to Play MCMS x MerkurXTip"></iframe>
       </div>
@@ -426,7 +424,7 @@
       </div>
     </div>
 
-    <div class="work-card glass-card">
+    <div class="work-card glass-card cat-mint">
       <div class="work-thumb work-thumb-ratio">
         <iframe src="https://www.youtube.com/embed/EvMUeWVe8XU?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Scan to Play Short"></iframe>
       </div>
@@ -437,7 +435,7 @@
       </div>
     </div>
 
-    <div class="work-card glass-card">
+    <div class="work-card glass-card cat-blue">
       <div class="work-thumb work-thumb-ratio">
         <iframe src="https://www.youtube.com/embed/6Mx9O1YAKCs?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Imperia Casino Sofia"></iframe>
       </div>
@@ -448,7 +446,7 @@
       </div>
     </div>
 
-    <div class="work-card glass-card">
+    <div class="work-card glass-card cat-yellow">
       <div class="work-thumb work-thumb-ratio">
         <iframe src="https://www.youtube.com/embed/Sh2-ez15w2U?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Felix Gaming Charity Football Quiz Night"></iframe>
       </div>
@@ -571,6 +569,22 @@
         sats.push({ mesh: s, angle: a });
       }
 
+      const starCount = 260;
+      const starPositions = new Float32Array(starCount * 3);
+      for (let i = 0; i < starCount; i++) {
+        const r = 9 + Math.random() * 16;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos((Math.random() * 2) - 1);
+        starPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+        starPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        starPositions[i * 3 + 2] = r * Math.cos(phi);
+      }
+      const starGeo = new THREE.BufferGeometry();
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+      const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.055, transparent: true, opacity: 0.55, sizeAttenuation: true });
+      const stars = new THREE.Points(starGeo, starMat);
+      scene.add(stars);
+
       let mouseX = 0, mouseY = 0;
       window.addEventListener('mousemove', (e) => {
         mouseX = (e.clientX / window.innerWidth - 0.5);
@@ -596,6 +610,8 @@
         });
         tmpColor.setHSL(targetHue % 1, 0.55, 0.64);
         mat.color.lerp(tmpColor, 0.03);
+        stars.rotation.y += 0.0004;
+        stars.rotation.x += 0.00015;
         camera.position.x += (mouseX * 0.8 - camera.position.x) * 0.03;
         camera.position.y += (-mouseY * 0.6 - camera.position.y) * 0.03;
         camera.lookAt(0, 0, 0);
@@ -714,6 +730,7 @@
     el.addEventListener('mouseenter', () => { el.style.transition = ''; });
   }
   document.querySelectorAll('.work-card').forEach(el => attachTilt(el, 4));
+  document.querySelectorAll('.hero-quote-card, .stat').forEach(el => attachTilt(el, 3));
 
   const glow = document.getElementById('cursor-glow');
   if (glow && window.matchMedia('(pointer: fine)').matches) {
