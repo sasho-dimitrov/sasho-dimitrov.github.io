@@ -98,6 +98,18 @@
   .graf-word { filter: url(#spray-rough); }
   .graf-splat path { filter: url(#spray-rough); }
 
+  /* INTRO GATE */
+  body.gate-locked { overflow: hidden; height: 100vh; }
+  #introGate { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; background: var(--black); cursor: pointer; transition: transform 0.8s cubic-bezier(0.7,0,0.3,1), opacity 0.6s ease; }
+  #introGate.gate-exit { transform: translateY(-102%); opacity: 0.4; pointer-events: none; }
+  .intro-inner { position: relative; z-index: 2; text-align: center; padding: 2rem; }
+  .intro-eyebrow { font-family: 'Space Mono', monospace; letter-spacing: 0.25em; text-transform: uppercase; color: var(--yellow); font-size: 0.68rem; margin-bottom: 1.3rem; opacity: 0; animation: fade-up 0.6s var(--ease) 0.25s forwards; }
+  .intro-tag { font-family: 'Anton', sans-serif; text-transform: uppercase; line-height: 0.86; font-size: clamp(2.8rem, 12vw, 8.5rem); color: var(--white); text-shadow: 4px 4px 0 var(--orange), 8px 9px 0 rgba(0,0,0,0.65); clip-path: inset(0 100% 0 0); animation: spray-in 1s cubic-bezier(0.7,0,0.3,1) 0.5s forwards; filter: url(#spray-rough); transform: skew(-2deg); }
+  .intro-hint { margin-top: 2.4rem; font-family: 'Space Mono', monospace; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--grey); opacity: 0; animation: fade-up 0.6s var(--ease) 1.7s forwards, hint-blink 1.6s ease-in-out 2.3s infinite; }
+  .intro-hint span { display: inline-block; animation: hint-bounce 1.2s ease-in-out infinite; margin-left: 0.4rem; color: var(--yellow); }
+  @keyframes hint-blink { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+  @keyframes hint-bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
   /* BRICK WALL BACKGROUND */
   .brick-bg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -3; pointer-events: none; }
   .brick-scrim { position: fixed; inset: 0; z-index: -2; pointer-events: none; background: linear-gradient(180deg, rgba(8,7,6,0.7) 0%, rgba(8,7,6,0.8) 100%); }
@@ -109,13 +121,19 @@
   .sec-marker .ow-tag { margin-left: auto; }
 
   /* NAV */
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.15rem 3rem; background: linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, transparent 100%); }
-  .nav-logo { font-family: 'Anton', sans-serif; font-size: 1.05rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--white); text-decoration: none; transform: skew(-6deg); display: inline-block; text-shadow: 3px 3px 0 rgba(244,193,15,0.5); transition: text-shadow 0.4s var(--ease); }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.15rem 3rem; background: linear-gradient(to bottom, rgba(10,10,10,0.97) 0%, transparent 100%); transform: translateY(-110%); transition: transform 0.7s var(--ease) 0.2s; }
+  nav.nav-in { transform: translateY(0); }
+  .nav-logo { font-family: 'Anton', sans-serif; font-size: 1.05rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--white); text-decoration: none; transform: skew(-6deg); display: inline-block; white-space: nowrap; text-shadow: 3px 3px 0 rgba(244,193,15,0.5); transition: text-shadow 0.4s var(--ease); }
   .nav-logo:hover { text-shadow: 4px 4px 0 rgba(255,67,16,0.6); }
   .nav-links { display: flex; gap: 2.2rem; list-style: none; }
   .nav-links a { font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey); text-decoration: none; transition: color 0.3s var(--ease); position: relative; }
   .nav-links a::before { content: '/'; color: var(--yellow); margin-right: 0.4rem; }
   .nav-links a:hover { color: var(--yellow); }
+  .nav-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 36px; height: 36px; background: none; border: none; cursor: pointer; z-index: 101; padding: 0; }
+  .nav-toggle span { display: block; width: 100%; height: 3px; background: var(--yellow); transition: transform 0.3s var(--ease), opacity 0.3s var(--ease); }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
   .hazard { background-image: repeating-linear-gradient(135deg, var(--yellow), var(--yellow) 10px, var(--black) 10px, var(--black) 20px); }
 
@@ -243,8 +261,14 @@
     .work-card:nth-child(2n) { border-right: none; }
   }
   @media (max-width: 900px) {
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { gap: 1.2rem; }
+    nav { padding: 1rem 1.2rem; }
+    .nav-logo { font-size: 0.8rem; }
+    .nav-toggle { display: flex; }
+    .nav-links { position: fixed; inset: 0; z-index: 99; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; padding: 2rem 1.6rem; background: rgba(8,7,6,0.94); opacity: 0; pointer-events: none; transform: translateY(-14px); transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); }
+    .nav-links.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .nav-links li { width: 100%; border-bottom: 1px solid var(--line); }
+    .nav-links a { font-family: 'Anton', sans-serif; font-size: 2.3rem; letter-spacing: 0.01em; padding: 0.85rem 0; display: block; color: var(--white); }
+    .nav-links a::before { font-family: 'Space Mono', monospace; font-size: 0.85rem; vertical-align: middle; margin-right: 0.6rem; }
     .hero { grid-template-columns: 1fr; min-height: auto; }
     .hero-left { padding: 7rem 1.5rem 2.5rem; }
     .hero-right { grid-template-rows: auto auto; }
@@ -263,9 +287,27 @@
     .sec-marker .ow-tag { display: none; }
     footer { flex-wrap: wrap; gap: 0.6rem; }
   }
+  @media (max-width: 400px) {
+    .hero-name { font-size: clamp(2.5rem, 13vw, 3.4rem); }
+    .about-heading { font-size: clamp(1.7rem, 8vw, 2.4rem); }
+    .services-heading { font-size: clamp(1.8rem, 8vw, 2.5rem); }
+    .contact-heading { font-size: clamp(1.7rem, 8vw, 2.4rem); }
+    .hero-quote { font-size: 0.95rem; }
+    .hero-eyebrow { font-size: 0.56rem; }
+    .ow-tag { font-size: 0.54rem; padding: 0.4rem 0.55rem; }
+    .nav-links a { font-size: 1.9rem; }
+  }
 </style>
 </head>
 <body>
+
+<div id="introGate">
+  <div class="intro-inner">
+    <p class="intro-eyebrow">[ Sofia Underground ]</p>
+    <h1 class="intro-tag">Sasho<br>Dimitrov</h1>
+    <p class="intro-hint">Scroll / Tap To Enter<span>↓</span></p>
+  </div>
+</div>
 
 <svg class="brick-bg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs>
@@ -299,10 +341,31 @@
   <rect x="76%" y="52%" width="52" height="24" fill="#0A0A0A" opacity="0.65"/>
   <rect x="30%" y="80%" width="58" height="26" fill="#0A0A0A" opacity="0.6"/>
   <rect x="55%" y="30%" width="40" height="20" fill="#0A0A0A" opacity="0.5"/>
+  <rect x="8%" y="45%" width="110" height="30" fill="#0A0A0A" opacity="0.72"/>
+  <rect x="45%" y="68%" width="90" height="34" fill="#050403" opacity="0.68"/>
+  <rect x="63%" y="8%" width="70" height="26" fill="#0A0A0A" opacity="0.6"/>
+  <rect x="20%" y="60%" width="46" height="20" fill="#0A0A0A" opacity="0.55"/>
+  <rect x="88%" y="35%" width="60" height="28" fill="#050403" opacity="0.65"/>
   <path d="M 0 130 L 55 175 L 38 250 L 100 320" stroke="#050403" stroke-width="2" fill="none" opacity="0.55"/>
   <path d="M 1220 50 L 1175 145 L 1240 205 L 1190 310" stroke="#050403" stroke-width="2" fill="none" opacity="0.5"/>
   <path d="M 320 720 L 395 655 L 365 570" stroke="#050403" stroke-width="1.5" fill="none" opacity="0.45"/>
   <path d="M 900 850 L 950 790 L 930 720 L 980 660" stroke="#050403" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M 60 1180 L 140 1230 L 110 1340 L 200 1420" stroke="#050403" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M 1300 1500 L 1240 1580 L 1290 1660" stroke="#050403" stroke-width="1.5" fill="none" opacity="0.42"/>
+
+  <!-- crime-scene chalk marks -->
+  <g opacity="0.4" stroke="#f0ece1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-dasharray="3 8" transform="translate(70,760) scale(1.5) rotate(-3)">
+    <circle cx="60" cy="20" r="18"/>
+    <path d="M42,45 L0,80 L-15,75 M42,45 L18,95 L15,110 M78,45 L120,80 L135,75 M78,45 L102,95 L105,110 M60,38 L60,130 L30,190 L15,235 M60,130 L90,190 L110,235"/>
+  </g>
+  <g opacity="0.55" font-family="'Space Mono',monospace">
+    <path d="M120,900 L138,865 L156,900 Z" fill="none" stroke="#f0ece1" stroke-width="2"/>
+    <text x="138" y="893" font-size="12" fill="#f0ece1" text-anchor="middle">1</text>
+    <path d="M240,940 L258,905 L276,940 Z" fill="none" stroke="#f0ece1" stroke-width="2"/>
+    <text x="258" y="933" font-size="12" fill="#f0ece1" text-anchor="middle">2</text>
+  </g>
+  <path d="M 155 850 L 260 920" stroke="#f0ece1" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.35"/>
+  <text x="40" y="1000" font-family="'Permanent Marker',cursive" font-size="15" fill="#f0ece1" opacity="0.32" transform="rotate(-3 40 1000)">DO NOT CROSS</text>
 </svg>
 <div class="brick-scrim"></div>
 
@@ -310,7 +373,8 @@
 
 <nav>
   <a href="#" class="nav-logo">Sasho Dimitrov</a>
-  <ul class="nav-links">
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="#work">Work</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#services">Services</a></li>
@@ -356,8 +420,8 @@
 
 <div class="marquee">
   <div class="marquee-track">
-    <span>Colour Grading</span><span>Multicam Production</span><span>Event Coverage</span><span>DaVinci Resolve Studio</span><span>Sofia, Bulgaria</span>
-    <span>Colour Grading</span><span>Multicam Production</span><span>Event Coverage</span><span>DaVinci Resolve Studio</span><span>Sofia, Bulgaria</span>
+    <span>Colour Grading</span><span>Multicam Production</span><span>Caution — Raw Footage</span><span>Event Coverage</span><span>DaVinci Resolve Studio</span><span>Do Not Cross</span><span>Sofia, Bulgaria</span>
+    <span>Colour Grading</span><span>Multicam Production</span><span>Caution — Raw Footage</span><span>Event Coverage</span><span>DaVinci Resolve Studio</span><span>Do Not Cross</span><span>Sofia, Bulgaria</span>
   </div>
 </div>
 
@@ -527,6 +591,47 @@
 </footer>
 
 <script>
+  // INTRO GATE — locked sequential entry before nav/menu appears
+  (function () {
+    const gate = document.getElementById('introGate');
+    const navEl = document.querySelector('nav');
+    document.body.classList.add('gate-locked');
+    let exited = false;
+    function exitGate() {
+      if (exited) return;
+      exited = true;
+      gate.classList.add('gate-exit');
+      document.body.classList.remove('gate-locked');
+      navEl.classList.add('nav-in');
+      window.removeEventListener('wheel', exitGate);
+      window.removeEventListener('touchstart', exitGate);
+      window.removeEventListener('keydown', keyHandler);
+      setTimeout(() => { gate.style.display = 'none'; }, 900);
+    }
+    function keyHandler(e) {
+      if (['ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) exitGate();
+    }
+    window.addEventListener('wheel', exitGate, { passive: true });
+    window.addEventListener('touchstart', exitGate, { passive: true });
+    window.addEventListener('keydown', keyHandler);
+    gate.addEventListener('click', exitGate);
+  })();
+
+  // MOBILE NAV TOGGLE
+  (function () {
+    const toggle = document.getElementById('navToggle');
+    const links = document.getElementById('navLinks');
+    if (!toggle || !links) return;
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      links.classList.toggle('open');
+    });
+    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      toggle.classList.remove('open');
+      links.classList.remove('open');
+    }));
+  })();
+
   const obs = new IntersectionObserver(entries => {
     entries.forEach((e, i) => {
       if (e.isIntersecting) {
